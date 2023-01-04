@@ -34,8 +34,6 @@ resources = {
 }
 
 # Main body
-# Make a dictionary to filter through input key values
-
 
 def report():
     output = f"Water: {resources['water']}ml\n" \
