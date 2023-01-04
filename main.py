@@ -38,50 +38,54 @@ resources = {
 
 
 def report():
-    output = f"Water: {resources['water']}ml" \
-          f"Milk: {resources['milk']}ml" \
-          f"Coffee: {resources['coffee']}g" \
-          f"Money: ${resources['money']}"
+    output = f"Water: {resources['water']}ml\n" \
+          f"Milk: {resources['milk']}ml\n" \
+          f"Coffee: {resources['coffee']}g\n" \
+          f"Money: ${round(resources['money'], 2)}\n"
     print(output)
 
 
 def checkresources(drink):
-    global flag
     if resources['water'] - MENU[drink]['ingredients']['water'] < 0:
-        flag = False
         return "Sorry there is not enough water"
     if resources['milk'] - MENU[drink]['ingredients']['milk'] < 0:
-        flag = False
         return "Sorry there is not enough milk"
     if resources['coffee'] - MENU[drink]['ingredients']['coffee'] < 0:
-        flag = False
         return "Sorry there is not enough coffee"
 
-    return 1
+    return 0
 
 
 def coins():
-    quarters = input("How many quarters?: ")
-    dimes = input("How many dimes?: ")
-    nickels = input("How many nickels?: ")
-    pennies = input("How many pennies?: ")
+    quarters = int(input("How many quarters?: "))
+    dimes = int(input("How many dimes?: "))
+    nickels = int(input("How many nickels?: "))
+    pennies = int(input("How many pennies?: "))
 
     total = float(quarters * 0.25 + dimes * 0.10 + nickels * 0.05 + pennies * 0.01)
     return total
 
 
 def drink(drink):
-    global flag
-    checkresources(drink)
     amount = coins()
     change = amount - MENU[drink]['cost']
 
     if change > 0:
-        print(f"Here is ${change} in change")
+        print(f"Here is ${round(change, 2)} in change")
+        resources['money'] += amount - change
     elif change < 0:
         print("insufficient funds")
-        flag = False
-    resources['money'] += amount
+    else:
+        resources['money'] += amount - change
+
+    if checkresources(drink) != 0:
+        print(checkresources(drink))
+    else:
+        resources['water'] -= MENU[drink]['ingredients']['water']
+        resources['milk'] -= MENU[drink]['ingredients']['milk']
+        resources['coffee'] -= MENU[drink]['ingredients']['coffee']
+
+        print("Here is your Latte, Enjoy!")
 
 
 flag = True
@@ -91,7 +95,13 @@ while flag:
     match inputValue:
         case "expresso":
             drink("expresso")
+        case "latte":
+            drink("latte")
+        case "cappuccino":
+            drink("cappuccino")
         case "report":
             report()
         case "off":
             flag = False
+
+# End program
